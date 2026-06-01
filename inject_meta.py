@@ -12,13 +12,13 @@ import os
 
 # 你想顯示在分享卡片上的標題與描述（可自行修改）
 CUSTOM_META = """
-    <title>小資族理財 App ── Noreen 專屬訂製版</title>
+    <title>小資族理財 App - By Noreen</title>
     <meta name="description" content="專為個人量身打造的資產管理與台美股投資觀測工具，助你精準規劃財務進度。" />
-    <meta property="og:title" content="小資族理財 App ── Noreen 專屬訂製版" />
+    <meta property="og:title" content="小資族理財 App - By Noreen" />
     <meta property="og:description" content="專為個人量身打造的資產管理與台美股投資觀測工具，助你精準規劃財務進度。" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="小資族理財 App ── Noreen 專屬訂製版" />
+    <meta name="twitter:title" content="小資族理財 App - By Noreen" />
     <meta name="twitter:description" content="個人化資產管理與台美股投資觀測工具。" />
 """
 
