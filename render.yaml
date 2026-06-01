@@ -4,5 +4,5 @@ services:
     runtime: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
-    # $PORT 由 Render 動態指定，務必沿用；關掉使用統計與 CORS 讓啟動更乾淨
-    startCommand: "streamlit run wealth.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --browser.gatherUsageStats false"
+    # 先跑 inject_meta.py 注入分享預覽用的 OG meta tags，再啟動 Streamlit
+    startCommand: "python inject_meta.py && streamlit run wealth.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --browser.gatherUsageStats false"
