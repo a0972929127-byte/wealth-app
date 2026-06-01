@@ -1,9 +1,12 @@
 """
-小資族股市與理財 App ── Noreen 專屬訂製版 (極致滿版浮水印 & 專欄擴充版)
+小資族股市與理財 App ── Noreen 專屬訂製版 (終極大成版)
 ============================================
-1. 浮水印升級為「滿版重複平鋪 (Tiled)」，縮小字體並保持極低透明度。
-2. 浮水印支援雙模式動態變色 (Light/Dark Mode)。
-3. 大幅擴充「投資專欄」內容，涵蓋產業趨勢、財商心理學與防詐解析。
+整合項目：
+1. 隱藏 Streamlit 預設底部 Footer 與版權標籤。
+2. 完美雙模式 CSS (解決 Light Mode 黑色殘留與字體隱形)。
+3. 滿版微透浮水印 (動態適配 Light/Dark)。
+4. 強化 ETF 防呆搜尋 (4~6碼) 與基本面 safe_metric。
+5. 擴充投資專欄與數據化推薦選股。
 """
 
 import streamlit as st
@@ -21,6 +24,10 @@ st.set_page_config(page_title="小資族理財 App｜Noreen", page_icon="📱", 
 st.markdown(
     """
     <style>
+      /* 🚀 隱藏 Streamlit 官方預設的底部浮水印與選單 */
+      footer {visibility: hidden;}
+      .viewerBadge_container__1QSob, .viewerBadge_link__1S137 { display: none !important; }
+
       /* =========================================
          預設：暗色模式 (Dark Mode) 樣式
          ========================================= */
@@ -51,7 +58,7 @@ st.markdown(
       .analysis-card { background: #262730; padding: 20px; border-radius: 10px; border: 1px solid #444; margin-bottom: 20px; color: #ffffff; }
       .card-desc { color: #aaaaaa; font-size: 0.85rem; margin-bottom: 15px; line-height: 1.5; }
       
-      /* 🚀 滿版重複浮水印 (Dark Mode 預設為微透白) */
+      /* 滿版重複浮水印 (Dark Mode) */
       .watermark-container {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         pointer-events: none; z-index: 9999;
@@ -63,7 +70,9 @@ st.markdown(
          🌞 亮色模式 (Light Mode) 極簡復古覆寫
          ========================================= */
       @media (prefers-color-scheme: light) {
-          .app-card-dark { background-color: #FDFBF7 !important; border: 1px solid #E8E3D8; color: #4A4036 !important; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+          /* 強制所有卡片與文字轉換為咖啡米色調，解決黑色殘留問題 */
+          .app-card-dark { background-color: #FDFBF7 !important; border: 1px solid #E8E3D8 !important; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+          .app-card-dark div, .app-card-dark span, .app-card-dark p { color: #4A4036 !important; }
           .dark-metric-label { color: #8C7D70 !important; }
           .analysis-card { background-color: #FDFBF7 !important; border: 1px solid #E8E3D8 !important; color: #4A4036 !important; }
           .card-desc { color: #8C7D70 !important; }
@@ -74,15 +83,13 @@ st.markdown(
           .blog-meta { color: #8C7D70 !important; }
           .blog-desc { color: #5E5247 !important; }
           
-          /* 🚀 滿版重複浮水印 (Light Mode 自動切換為微透深咖啡色) */
           .watermark-container {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='150'%3E%3Ctext x='10' y='75' transform='rotate(-20 110 75)' font-size='14' font-weight='bold' fill='rgba(74,64,54,0.04)' font-family='sans-serif'%3Ewealth app - Noreen%3C/text%3E%3C/svg%3E");
           }
-
+          
           h1, h2, h3, h4, h5, h6, p, li, span, b, strong, div { color: inherit; }
       }
     </style>
-    <!-- 渲染滿版浮水印容器 -->
     <div class="watermark-container"></div>
     """,
     unsafe_allow_html=True,
@@ -291,10 +298,10 @@ elif page == "📋 規劃 (Planning)":
     if st.session_state.plan_mode != "手動輸入目標金額":
         st.session_state.monthly_expense = st.number_input("預估退休後每月支出", value=st.session_state.monthly_expense, step=5000)
         st.session_state.retire_years = st.number_input("預估存活年數", value=st.session_state.retire_years, step=1)
-        st.markdown(f"<div class='dark-metric-label'>自動計算目標金額</div><div class='metric-value'>NT${target_amount:,.0f}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='dark-metric-label'>系統精算提示</div><div style='font-size:1.2rem; font-weight:bold; margin-top:5px;'>自動計算目標金額：NT${target_amount:,.0f}</div>", unsafe_allow_html=True)
     else:
         st.session_state.manual_target = st.number_input("自訂目標金額", value=st.session_state.manual_target, step=1000000)
-        st.markdown(f"<div class='dark-metric-label'>設定目標金額</div><div class='metric-value'>NT${st.session_state.manual_target:,.0f}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='dark-metric-label'>系統精算提示</div><div style='font-size:1.2rem; font-weight:bold; margin-top:5px;'>設定目標金額：NT${st.session_state.manual_target:,.0f}</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
     st.session_state.return_mode = st.radio("選擇基準", ["各資產近 10 年年化報酬率", "各資產近 20 年年化報酬率", "個別自訂報酬率"])
 
@@ -426,7 +433,7 @@ elif page == "💡 數據化推薦股 (Data-driven Insights)":
         st.markdown("</div>", unsafe_allow_html=True)
 
     with c_k2:
-        st.markdown("<div class='analysis-card'><h4>⚖️ RSI 相對強弱</h4><div class='card-desc'>說明：小於 30 視為超賣區，大於 70 視為超買區。</div>", unsafe_allow_html=True)
+        st.markdown("<div class='analysis-card'><h4>⚖️ RSI 相弱強弱</h4><div class='card-desc'>說明：小於 30 視為超賣區，大於 70 視為超買區。</div>", unsafe_allow_html=True)
         st.success("⬆️ **超賣反彈區**：\n2881 富邦金、2891 中信金、2882 國泰金")
         st.error("⬇️ **超買過熱區**：\nNVDA 輝達、TSM 台積電ADR")
         st.markdown("</div>", unsafe_allow_html=True)
@@ -437,7 +444,7 @@ elif page == "💡 數據化推薦股 (Data-driven Insights)":
         st.markdown("</div>", unsafe_allow_html=True)
 
 # =============================================================
-# 模組：📖 投資專欄 (大幅擴充內容)
+# 模組：📖 投資專欄
 # =============================================================
 elif page == "📖 投資專欄 (Investment Blog)":
     st.markdown("<h1>投資專欄</h1>", unsafe_allow_html=True)
@@ -451,13 +458,13 @@ elif page == "📖 投資專欄 (Investment Blog)":
             <span class="blog-tag tag-news">產業前沿</span>
             <div class="blog-title">AI 資料中心建置潮：散熱、抗震與模組化的十年一遇商機</div>
             <div class="blog-meta">📅 今天 | ⏱️ 閱讀時間：5分鐘</div>
-            <div class="blog-desc">隨著 AI 伺服器的高耗能與散熱需求激增，除了傳統晶片廠，資料中心機房的基礎建設也迎來爆發。為了應對伺服器重量與潛在風險，機櫃的 7 級抗震規範、模組化管線支撐系統（如高強度錨栓與組裝件）正成為供應鏈中不可忽視的「硬底子」商機... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
+            <div class="blog-desc">隨著 AI 伺服器的高耗能與散熱需求激增，除了傳統晶片廠，資料中心機房的基礎建設也迎來爆發。為了應對伺服器重量與潛在風險，機櫃的 7 級抗震規範、模組化管線支撐系統正成為供應鏈中不可忽視的「硬底子」商機... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
         </div>
         <div class="blog-card">
             <span class="blog-tag tag-news">網通智造</span>
             <div class="blog-title">工業網通與自動化設備：邊緣運算的下一波主戰場</div>
             <div class="blog-meta">📅 昨天 | ⏱️ 閱讀時間：4分鐘</div>
-            <div class="blog-desc">當 AI 模型從雲端走向落地應用，智慧工廠與自動化生產線的數據傳輸成為關鍵。具備高穩定性與抗惡劣環境的工業級網通設備（如交換器、邊緣運算閘道器）需求正迎來強勁成長，台系工業電腦與網通大廠正積極卡位全球供應鏈... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
+            <div class="blog-desc">當 AI 模型從雲端走向落地應用，智慧工廠與自動化生產線的數據傳輸成為關鍵。具備高穩定性與抗惡劣環境的工業級網通設備需求正迎來強勁成長... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
         </div>
         <div class="blog-card">
             <span class="blog-tag tag-news">市場脈動</span>
@@ -473,19 +480,19 @@ elif page == "📖 投資專欄 (Investment Blog)":
             <span class="blog-tag tag-psy">財商心理學</span>
             <div class="blog-title">從「人類圖」看投資天賦：你是哪一種策略家？</div>
             <div class="blog-meta">⏱️ 閱讀時間：6分鐘 | 🏷️ 自我探索</div>
-            <div class="blog-desc">投資不只是與市場博弈，更是認識自己的過程！了解自己的設計能幫助建立更穩定的心態。例如，擁有「5/1 異端探究者」特質的人，往往擅長深入研究底層邏輯，非常適合挖掘基本面被低估的好公司；而擁有「直覺中心 (Splenic Authority)」的人，在面對市場劇烈波動或系統性風險前，經常能閃過一絲無以名狀的危機感，這時候順應直覺果斷減碼，往往能避開大跌... <a href="#" style="color:#f6ad55;">閱讀全文 ↗</a></div>
+            <div class="blog-desc">投資不只是與市場博弈，更是認識自己的過程！了解自己的設計能幫助建立更穩定的心態。例如，擁有「5/1 異端探究者」特質的人，往往擅長深入研究底層邏輯，非常適合挖掘基本面被低估的好公司... <a href="#" style="color:#f6ad55;">閱讀全文 ↗</a></div>
         </div>
         <div class="blog-card">
             <span class="blog-tag tag-style">生活理財</span>
             <div class="blog-title">極簡生活與財務自由：少即是多的理財哲學</div>
             <div class="blog-meta">⏱️ 閱讀時間：4分鐘 | 🏷️ 觀念建立</div>
-            <div class="blog-desc">存錢不代表要過得刻苦。喜歡復古極簡的風格、追求質感好的經典單品（例如一個能揹很多年的百搭皮包），其實也是一種避免盲目跟風、減少衝動消費的理財哲學。把錢集中花在真正喜歡且耐用的事物上，能幫你更快累積投資本金... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
+            <div class="blog-desc">存錢不代表要過得刻苦。把錢集中花在真正喜歡且耐用的事物上，能幫你更快累積投資本金... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
         </div>
         <div class="blog-card">
             <span class="blog-tag tag-style">投資策略</span>
             <div class="blog-title">價值投資 vs 成長投資：哪一種適合現在的你？</div>
             <div class="blog-meta">⏱️ 閱讀時間：6分鐘 | 🏷️ 新手必讀</div>
-            <div class="blog-desc">股市中兩大最經典的門派！價值投資尋找被市場低估的好公司（如金融、傳產），而成長投資則押注未來爆發力強的企業（如 AI、雲端）。一文看懂如何根據自己的風險承受度配置資產... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
+            <div class="blog-desc">股市中兩大最經典的門派！一文看懂如何根據自己的風險承受度配置資產... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -495,7 +502,7 @@ elif page == "📖 投資專欄 (Investment Blog)":
             <span class="blog-tag tag-fraud">手法解析</span>
             <div class="blog-title">🚨 虛擬貨幣假交易所：看懂「殺豬盤」的致命三步</div>
             <div class="blog-meta">⚠️ 數位資產安全</div>
-            <div class="blog-desc">詐騙集團常透過交友軟體建立感情，接著誘導受害者將資金轉入「特製的假虛擬貨幣交易所」。一開始會讓你有小額獲利並成功提現，當你投入大筆資金後，平台就會以「需繳納保證金」或「帳戶凍結」為由拒絕出金，這就是典型的殺豬盤陷阱... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
+            <div class="blog-desc">詐騙集團常透過交友軟體建立感情，接著誘導受害者將資金轉入「特製的假虛擬貨幣交易所」。一開始會讓你有小額獲利並成功提現，當你投入大筆資金後，平台就會以「需繳納保證金」或「帳戶凍結」為由拒絕出金... <a href="#" style="color:#64ffda;">閱讀全文 ↗</a></div>
         </div>
         <div class="blog-card">
             <span class="blog-tag tag-fraud">高度警示</span>
