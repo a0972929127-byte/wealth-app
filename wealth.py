@@ -66,7 +66,7 @@ st.markdown(
       .tag-style { background-color: rgba(99, 110, 250, 0.15); color: #5058c9; }
       .tag-fraud { background-color: rgba(239, 85, 59, 0.15); color: #d64a33; }
       .tag-psy { background-color: rgba(246, 173, 85, 0.15); color: #c48a44; }
-      
+
       /* 🚀 通用滿版重複浮水印 (採用中性灰，無論深淺色皆融合) */
       .watermark-container {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -74,7 +74,21 @@ st.markdown(
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='150'%3E%3Ctext x='10' y='75' transform='rotate(-20 110 75)' font-size='14' font-weight='bold' fill='rgba(128,128,128,0.06)' font-family='sans-serif'%3Ewealth app - Noreen%3C/text%3E%3C/svg%3E");
         background-repeat: repeat;
       }
-      
+
+      /* 📱 手機版自適應：縮小字體，避免大標題侵佔版面（≤640px 才套用，桌機不受影響） */
+      @media (max-width: 640px) {
+        h1 { font-size: 1.6rem !important; }
+        h2 { font-size: 1.3rem !important; }
+        h3 { font-size: 1.1rem !important; }
+        .metric-value { font-size: 1.5rem !important; }
+        .blog-title { font-size: 1.05rem !important; }
+        .blog-desc { font-size: 0.9rem !important; }
+        .app-card-dark { padding: 16px !important; border-radius: 12px; }
+        .news-card, .blog-card, .analysis-card { padding: 14px !important; }
+        .stTabs [data-baseweb="tab"] { font-size: 0.95rem; height: 44px; }
+        div[data-testid="stMetricValue"] { font-size: 1.4rem !important; }
+      }
+
       /* 強制內部文字繼承，防跑版 */
       h1, h2, h3, h4, h5, h6, p, li, span, b, strong, div { color: inherit; }
     </style>
